@@ -55,8 +55,7 @@ local headersFile = '_headers';
 local outDir = webDir + '/webapp';
 
 // ---- Helpers ------------------------------------------------------------
-// Used only by the (now disabled) build-from-source steps below.
-// local enableCorepack = 'corepack enable';
+local enableCorepack = 'corepack enable';
 
 // ---- Workflow -----------------------------------------------------------
 {
@@ -151,7 +150,11 @@ local outDir = webDir + '/webapp';
         CLOUDFLARE_ACCOUNT_ID: { from_secret: 'cloudflare_account_id' },
       },
       commands: [
-        ('npx --yes wrangler@4 pages deploy "%s"' % extractedDir) +
+        // Use pnpm (via corepack) rather than npx: npm walks up to the monorepo
+        // root package.json whose devEngines.packageManager is pnpm and aborts
+        // with EBADDEVENGINES. pnpm satisfies that requirement.
+        enableCorepack,
+        ('pnpm dlx wrangler@4 pages deploy "%s"' % extractedDir) +
         (' --project-name "%s"' % projectName) +
         (' --branch "%s"' % productionBranch) +
         ' --commit-hash "$CI_COMMIT_SHA"' +
