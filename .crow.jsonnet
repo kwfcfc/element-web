@@ -62,7 +62,7 @@ local enableCorepack = 'corepack enable';
   // Only deploy when the tracking branch is pushed, or when a human triggers
   // the pipeline manually from the Crow UI/CLI.
   when: [
-    { event: 'push', branch: deployBranch },
+    // { event: 'push', branch: deployBranch },
     { event: 'manual' },
   ],
 
