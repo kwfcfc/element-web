@@ -25,11 +25,11 @@ local projectName = 'element-recursion-link';
 local productionBranch = 'main';
 
 // --- Upstream release we deploy. Bump this single line to track a new tag. ---
-local upstreamTag = 'v1.12.21';
+local upstreamTag = 'v1.12.22';
 local releaseBase = 'https://github.com/element-hq/element-web/releases/download/' + upstreamTag;
 local releaseKeyUrl = 'https://packages.element.io/element-release-key.asc';
-local tarball = 'element-' + upstreamTag + '.tar.gz';   // element-v1.12.21.tar.gz
-local extractedDir = 'element-' + upstreamTag;          // element-v1.12.21/
+local tarball = 'element-' + upstreamTag + '.tar.gz';   // element-v1.12.22.tar.gz
+local extractedDir = 'element-' + upstreamTag;          // element-v1.12.22/
 
 // Our two local config files that live next to the web app.
 local staticDir = "static";
