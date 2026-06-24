@@ -200,10 +200,7 @@
         "log_in_new_account": "<a>Login</a> met je nieuwe account.",
         "logout_dialog": {
             "description": "Weet je zeker dat je wilt uitloggen?",
-            "megolm_export": "Sleutels handmatig wegschrijven",
             "setup_key_backup_title": "Je zal de toegang tot je versleutelde berichten verliezen",
-            "setup_secure_backup_description_1": "Versleutelde berichten zijn beveiligd met eind-tot-eind-versleuteling. Enkel de ontvanger(s) en jij hebben de sleutels om deze berichten te lezen.",
-            "setup_secure_backup_description_2": "Wanneer je jezelf afmeldt, worden deze sleutels van dit apparaat verwijderd, wat betekent dat je geen versleutelde berichten kunt lezen, tenzij je de sleutels ervoor op je andere apparaten hebt of er een back-up van hebt gemaakt op de server.",
             "skip_key_backup": "Ik wil mijn versleutelde berichten niet"
         },
         "misconfigured_body": "Vraag jouw %(brand)s-beheerder <a>je configuratie</a> na te kijken op onjuiste of dubbele items.",
@@ -723,17 +720,6 @@
             "warning": "Als je de herstelmethode niet hebt verwijderd, is het mogelijk dat er een aanvaller toegang tot jouw account probeert te verkrijgen. Wijzig onmiddellijk je wachtwoord en stel bij instellingen een nieuwe herstelmethode in."
         },
         "set_up_toast_title": "Beveiligde back-up instellen",
-        "setup_secure_backup": {
-            "explainer": "Maak een back-up van je sleutels voordat je jezelf afmeldt om ze niet te verliezen."
-        },
-        "udd": {
-            "interactive_verification_button": "Interactief verifiëren door emoji",
-            "other_ask_verify_text": "Vraag deze persoon de sessie te verifiëren, of verifieer het handmatig hieronder.",
-            "other_new_session_text": "%(name)s%(userId)s heeft zich aangemeld bij een nieuwe sessie zonder deze te verifiëren:",
-            "own_ask_verify_text": "Verifieer je andere sessie op een van onderstaande wijzen.",
-            "own_new_session_text": "Je hebt je bij een nog niet geverifieerde sessie aangemeld:",
-            "title": "Niet vertrouwd"
-        },
         "unable_to_setup_keys_error": "Kan geen sleutels instellen",
         "verification": {
             "accepting": "Toestaan…",
@@ -3017,13 +3003,7 @@
         "close_to_view_right_panel": "Sluit deze widget om het in dit paneel weer te geven",
         "context_menu": {
             "delete": "Widget verwijderen",
-            "delete_warning": "Widgets verwijderen geldt voor alle deelnemers aan deze kamer. Weet je zeker dat je deze widget wilt verwijderen?",
-            "move_left": "Ga naar links",
-            "move_right": "Ga naar rechts",
-            "remove": "Verwijderen voor iedereen",
-            "revoke": "Machtigingen intrekken",
-            "screenshot": "Neem een foto",
-            "start_audio_stream": "Audiostream starten"
+            "delete_warning": "Widgets verwijderen geldt voor alle deelnemers aan deze kamer. Weet je zeker dat je deze widget wilt verwijderen?"
         },
         "cookie_warning": "Deze widget kan cookies gebruiken.",
         "error_hangup_description": "De verbinding is verbroken van uw oproep. (Error: %(message)s)",
