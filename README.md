@@ -9,7 +9,7 @@
 ## 上游
 
 - **上游项目**：[element-hq/element-web](https://github.com/element-hq/element-web)
-- **跟踪版本**：`v1.12.21`（在 `.crow.jsonnet` 中修改 `upstreamTag` 即可切换版本）
+- **跟踪版本**：`v1.12.22`（在 `.crow.jsonnet` 中修改 `upstreamTag` 即可切换版本）
 
 ## 实例
 
