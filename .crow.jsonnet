@@ -1,28 +1,20 @@
-// Crow CI workflow: publish Element Web to Cloudflare Pages via Direct Upload.
+// Crow CI workflow: publish Element Web via Direct Upload
 //
 // This branch tracks a specific upstream element-web tag. Instead of building
 // from source, we download the prebuilt, GPG-signed release tarball from
-// upstream, verify its signature, inject our own config + headers, and upload
-// the result with wrangler. To follow a newer release, bump `upstreamTag`.
-//
-// One-time setup on Cloudflare (creates the Pages project; safe to run locally):
-//   npx wrangler pages project create element-recursion-link --production-branch main
+// upstream, verify its signature, inject our own config + headers, pack it as a
+// .tar.zst archive, and upload it to Hosting. To follow a newer release, bump
+// `upstreamTag`.
 
 // ---- Configuration ------------------------------------------------------
-// Full node image (buildpack-deps based) ships curl, gnupg and tar, which the
-// fetch+verify step needs, plus node/npx for wrangler.
-local nodeImage = 'node:24-bookworm';
+// Alpine is enough because we only need curl, GnuPG, tar, and zstd.
+local ciImage = 'alpine:3.24';
+local ciDeps = 'apk add --no-cache ca-certificates curl gnupg tar zstd';
 
 // The branch on this repo that tracks the upstream tag and triggers a deploy.
 local deployBranch = 'deploy';
 
-// Cloudflare Pages project name (must already exist, see header).
-local projectName = 'element-recursion-link';
-
-// The project's "production branch" on Cloudflare. Passing this value to
-// `wrangler --branch` makes the upload a *production* deployment (the live
-// site) rather than a preview. It does not need to be a real git branch.
-local productionBranch = 'main';
+local siteUrl = 'https://element.recursion-link.eu.org/';
 
 // --- Upstream release we deploy. Bump this single line to track a new tag. ---
 local upstreamTag = 'v1.12.22';
@@ -30,6 +22,7 @@ local releaseBase = 'https://github.com/element-hq/element-web/releases/download
 local releaseKeyUrl = 'https://packages.element.io/element-release-key.asc';
 local tarball = 'element-' + upstreamTag + '.tar.gz';   // element-v1.12.22.tar.gz
 local extractedDir = 'element-' + upstreamTag;          // element-v1.12.22/
+local archive = extractedDir + '.tar.zst';              // element-v1.12.22.tar.zst
 
 // Our two local config files that live next to the web app.
 local staticDir = "static";
@@ -57,12 +50,12 @@ local headersFile = '_headers';
       },
     },
   ],
-
   steps: [
     {
       name: 'fetch-and-verify',
-      image: nodeImage,
+      image: ciImage,
       commands: [
+        ciDeps,
         // Download the prebuilt release tarball and its detached signature.
         'curl -fsSL -o "%s" "%s/%s"' % [tarball, releaseBase, tarball],
         'curl -fsSL -o "%s.asc" "%s/%s.asc"' % [tarball, releaseBase, tarball],
@@ -74,31 +67,28 @@ local headersFile = '_headers';
         // Unpack -> produces the `element-vX.Y.Z/` directory we will deploy.
         'tar -xzf "%s"' % tarball,
         // Inject our deployment config + security/caching headers.
-        // Element loads config.<host>.json first, then falls back to config.json
+        // Element loads config.<host>.json first, then falls back to config.json.
         'cp "%s/%s" "%s/%s"' % [staticDir, configFile, extractedDir, configFile],
         'cp "%s/%s" "%s/config.json"' % [staticDir, configFile, extractedDir],
-        // Cloudflare Pages reads a `_headers` file at the root of the upload.
+        // hosting reads a `_headers` file at the root of the uploaded archive.
         'cp "%s/%s" "%s/%s"' % [staticDir, headersFile, extractedDir, headersFile],
       ],
     },
     {
-      name: 'deploy',
-      image: nodeImage,
+      name: 'publish',
+      image: ciImage,
       depends_on: ['fetch-and-verify'],
-      // wrangler auto-reads these for non-interactive auth.
       environment: {
-        CLOUDFLARE_API_TOKEN: { from_secret: 'cloudflare_api_token' },
-        CLOUDFLARE_ACCOUNT_ID: { from_secret: 'cloudflare_account_id' },
+        PAGES_PASSWORD: { from_secret: 'pages_password' },
       },
       commands: [
-        // Use pnpm (via corepack) rather than npx: npm walks up to the monorepo
-        // root package.json whose devEngines.packageManager is pnpm and aborts
-        // with EBADDEVENGINES. pnpm satisfies that requirement.
-        ('npx wrangler@4 pages deploy "%s"' % extractedDir) +
-        (' --project-name "%s"' % projectName) +
-        (' --branch "%s"' % productionBranch) +
-        ' --commit-hash "$CI_COMMIT_SHA"' +
-        ' --commit-message "$CI_COMMIT_MESSAGE"',
+        ciDeps,
+        // Archive the contents of the web root, not the containing directory.
+        'tar -C "%s" -cf - . | zstd -3 -T0 -f -o "%s"' % [extractedDir, archive],
+        ('curl -fsS --retry 3 -X PUT "%s"' % siteUrl) +
+        ' -H "Authorization: Pages $PAGES_PASSWORD"' +
+        ' -H "Content-Type: application/x-tar+zstd"' +
+        (' --data-binary "@%s"' % archive),
       ],
     },
   ],
