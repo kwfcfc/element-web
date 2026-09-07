@@ -17,7 +17,7 @@ local deployBranch = 'deploy';
 local siteUrl = 'https://element.recursion-link.eu.org/';
 
 // --- Upstream release we deploy. Bump this single line to track a new tag. ---
-local upstreamTag = 'v1.12.26';
+local upstreamTag = 'v1.12.27';
 local releaseBase = 'https://github.com/element-hq/element-web/releases/download/' + upstreamTag;
 local releaseKeyUrl = 'https://packages.element.io/element-release-key.asc';
 local tarball = 'element-' + upstreamTag + '.tar.gz';   // element-v1.12.22.tar.gz
