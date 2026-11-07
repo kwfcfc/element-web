@@ -16,7 +16,9 @@
     "default_theme": "light",
     "disable_custom_urls": true,
     "disable_guests": true,
-    "element_call": {},
+    "element_call": {
+        "use_exclusively": true
+    },
     "embedded_pages": {
         "homeUrl": ""
     },
